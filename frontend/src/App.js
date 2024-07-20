@@ -4,20 +4,24 @@ import AllTasks from './pages/AllTasks'
 import ImportantTasks from './pages/ImportantTasks'
 import CompletedTasks from './pages/CompletedTasks'
 import IncompleteTasks from './pages/IncompleteTasks'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate , useLocation  } from 'react-router-dom'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from './store/auth'
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(()=> {
-    if (isLoggedIn === false){
+    if (localStorage.getItem("id") && localStorage.getItem("token")){
+      dispatch(authActions.login());
+    } else if (isLoggedIn === false && location.pathname !== '/login'){
       navigate("/signup ");
     }
-  }, [isLoggedIn, navigate]);
-  // 
+  }, [isLoggedIn, navigate, location.pathname, dispatch]);
   return (
     <div className='bg-gray-900 text-white h-screen p-2 relative'>
         <Routes>

@@ -3,35 +3,37 @@ import { FaExclamationCircle } from "react-icons/fa";
 import { MdEditNote } from "react-icons/md";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
+import axios from 'axios';
 
-const Cards = ({home, setinputDiv}) => {
-    const data = [
-        {
-            title: "Do Coding",
-            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore similique exercitationem dolore, corporis iusto soluta adipisci? Id cumque optio labore.",
-            status: "Incomplete"
-        },
-        {
-            title: "Do Exercise",
-            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore similique exercitationem dolore, corporis iusto so Id cumque optio labore.",
-            status: "Incomplete"
-        },
-        {
-            title: "Playing",
-            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. ",
-            status: "Complete"
-        },
-        {
-            title: "Work",
-            description: "Lor consectetur adipisicing elit. Tempore similique exercitationem dolore, corporis iusto soluta adipisci? Id cumque optio labore.",
-            status: "Incomplete"
-        },
-        {
-            title: "Travel",
-            description: "Lor consectetur adipisicing elit. Tempore similique exercitationem dolore, corporis iusto soluta adipisci? Id cumque optio labore.Id cumque optio labore adipisicing elit.",
-            status: "Incomplete"
+const Cards = ({home, setinputDiv, data}) => {
+    const headers = {
+        id: localStorage.getItem("id"),
+        authorization: `Bearer ${localStorage.getItem("token")}`
+    };
+    const handleTaskStatus = async(id)=> {
+        try {
+            await axios.put(
+                `http://localhost:1000/api/v2/update-comp-task/${id}`, 
+                {},
+                { headers }
+            );
+        } catch (error) {
+            console.log(error);
         }
-    ]
+    }
+
+    const handleTaskImp = async(id)=> {
+        try {
+            await axios.put(
+                `http://localhost:1000/api/v2/update-imp-task/${id}`, 
+                {},
+                { headers }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div className='grid grid-cols-4 gap-4 '>
             {data && data.map((items, i) => (
@@ -42,11 +44,11 @@ const Cards = ({home, setinputDiv}) => {
                         <p className="card-text">{items.description}</p>
                     </div>
                     <div className='m-2 flex items-center'>
-                        <button className={`${items.status === "Incomplete" ? "bg-red-500" : "bg-green-400"} px-2 py-1 rounded`}>
-                            {items.status}
+                        <button className={`${items.complete === false ? "bg-red-500" : "bg-green-400"} px-2 py-1 rounded`} onClick={()=> handleTaskStatus(items._id)}>
+                            {items.complete === false ? "Incomplete" : "Completed"}
                         </button>
                         <div className='w-3/6 px-1 text-2xl flex justify-around'>
-                            <button><FaExclamationCircle /></button>
+                            <button onClick={()=> handleTaskImp(items._id)} className={`${items.important === true ? "text-green-400" : "text-white"}`}><FaExclamationCircle /></button>
                             <button><MdEditNote /></button>
                             <button><MdOutlineDeleteSweep /></button>
                         </div>

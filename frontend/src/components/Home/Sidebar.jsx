@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { CgNotes } from "react-icons/cg";
 import { MdLabelImportant } from "react-icons/md";
 import { FaClipboardCheck } from "react-icons/fa";
 import { TbNotebookOff } from "react-icons/tb";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../store/auth';
+import axios from 'axios';
 
 const Sidebar = () => {
+    const dispatch = useDispatch();
+    const history = useNavigate();
     const data = [
         {
             title: "All Tasks",
@@ -27,15 +32,36 @@ const Sidebar = () => {
             icon: <TbNotebookOff />,
             link: "/incompletetasks"
         },
-    ]
+    ];
+    const [Data, setData] = useState();
+    const headers = {
+        id: localStorage.getItem("id"),
+        authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+    useEffect(()=> {
+        const fetch = async()=>{
+            const response = await axios.get("http://localhost:1000/api/v2/get-all-tasks", {headers});
+            setData(response.data.data);
+        };
+        fetch();
+    });
+
+    const logout = ()=> {
+        dispatch(authActions.logout());
+        localStorage.clear("id");
+        localStorage.clear("token");
+        history('/signup');
+    }
 
     return (
         <>
-            <div>
-                <h2 className='text-xl font-semibold'>Ross Cruk</h2>
-                <h3 className='text-gray-500 mb-2'>cruk@gmail.com</h3>
+            {Data && (
+                <div>
+                <h2 className='text-xl font-semibold'>{Data.username}</h2>
+                <h3 className='text-gray-500 mb-2'>{Data.email}</h3>
                 <hr />
             </div>
+            )}
             <div>
                 {data.map((items, i)=> (
                     <Link to={items.link} className='my-3 flex items-center hover:bg-gray-500 p-2 rounded transition-all duration:300'>
@@ -47,7 +73,7 @@ const Sidebar = () => {
                 ))}
             </div>
             <div>
-                <button type="button" className="btn btn-outline-primary w-full">Log Out</button>
+                <button type="button" className="btn btn-outline-primary w-full" onClick={logout}>Log Out</button>
             </div>
         </>
     )

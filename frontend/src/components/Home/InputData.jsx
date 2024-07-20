@@ -25,7 +25,7 @@ const InputData = ({inputDiv, setinputDiv}) => {
                         placeholder='Description...'
                         className='px-3 py-2 rounded w-full bg-gray-600 my-3'
                     ></textarea>
-                    <button type="button" class="btn btn-outline-success">Submit</button>
+                    <button type="button" className="btn btn-outline-success">Submit</button>
                 </div>
             </div>
         </>
