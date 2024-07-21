@@ -43,7 +43,9 @@ const Sidebar = () => {
             const response = await axios.get("http://localhost:1000/api/v2/get-all-tasks", {headers});
             setData(response.data.data);
         };
-        fetch();
+        if (localStorage.getItem("id") && localStorage.getItem("token")){
+            fetch();
+        }
     });
 
     const logout = ()=> {

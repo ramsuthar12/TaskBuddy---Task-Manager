@@ -5,7 +5,7 @@ import { MdOutlineDeleteSweep } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
 import axios from 'axios';
 
-const Cards = ({home, setinputDiv, data}) => {
+const Cards = ({home, setinputDiv, data, setupdatedData}) => {
     const headers = {
         id: localStorage.getItem("id"),
         authorization: `Bearer ${localStorage.getItem("token")}`
@@ -34,6 +34,22 @@ const Cards = ({home, setinputDiv, data}) => {
         }
     }
 
+    const handleUpdateTask = async(id, title, description)=> {
+        setinputDiv("fixed");
+        setupdatedData({id: id, title: title, description: description})
+    }
+
+    const handleDeleteTask = async(id)=> {
+        try {
+            await axios.delete(
+                `http://localhost:1000/api/v2/delete-task/${id}`,
+                { headers }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div className='grid grid-cols-4 gap-4 '>
             {data && data.map((items, i) => (
@@ -49,8 +65,8 @@ const Cards = ({home, setinputDiv, data}) => {
                         </button>
                         <div className='w-3/6 px-1 text-2xl flex justify-around'>
                             <button onClick={()=> handleTaskImp(items._id)} className={`${items.important === true ? "text-green-400" : "text-white"}`}><FaExclamationCircle /></button>
-                            <button><MdEditNote /></button>
-                            <button><MdOutlineDeleteSweep /></button>
+                            {home !== false && (<button onClick={()=> handleUpdateTask(items._id, items.title, items.description)}><MdEditNote /></button>)}
+                            <button onClick={()=> handleDeleteTask(items._id)}><MdOutlineDeleteSweep /></button>
                         </div>
                     </div>
                 </div>
