@@ -75,6 +75,21 @@ router.put("/update-imp-task/:id", authenticateToken, async(req, res)=>{
     }
 });
 
+
+//Update-Complete-status of a Task
+router.put("/update-comp-task/:id", authenticateToken, async(req, res)=>{
+    try {
+        const { id } = req.params;
+        const TaskData = await Task.findById(id);
+        const CompTask = TaskData.complete;
+        await Task.findByIdAndUpdate(id, {complete: !CompTask});
+        res.status(200).json({ message: "Task Status Updated Successfully!" });
+    } catch (error) {
+        console.log(error); 
+        res.status(400).json({ message: "Internal Server Error" });
+    }
+});
+
 //Get all Important Tasks
 router.get("/get-imp-tasks", authenticateToken, async(req, res)=>{
     try {
@@ -88,20 +103,6 @@ router.get("/get-imp-tasks", authenticateToken, async(req, res)=>{
         res.status(200).json({ data: ImpTaskData });
     } catch (error) {
         console.log(error);
-        res.status(400).json({ message: "Internal Server Error" });
-    }
-});
-
-//Update-Complete-status of a Task
-router.put("/update-comp-task/:id", authenticateToken, async(req, res)=>{
-    try {
-        const { id } = req.params;
-        const TaskData = await Task.findById(id);
-        const CompTask = TaskData.complete;
-        await Task.findByIdAndUpdate(id, {complete: !CompTask});
-        res.status(200).json({ message: "Task Status Updated Successfully!" });
-    } catch (error) {
-        console.log(error); 
         res.status(400).json({ message: "Internal Server Error" });
     }
 });
